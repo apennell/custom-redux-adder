@@ -5,25 +5,50 @@ function reducer(state, action) {
   return state;
 }
 
+// Custom function that behaves like Redux's `createStore()`
+// "Factory Pattern"--pattern used in JS for creating complex objects, like our store
+// Provides a closure for variables declared inside the factory function
+function createStore(reducer) {
+  // Close over `state` variable to make private and inaccessible outside of `createStore()``
+  // Only available to the functions inside `createStore()`, preventing unintended reads/writes
+  // Allows it to "live on" between function calls
+  let state = 0;
+
+  // Provide read access to state from outside `createStore()` by returning `state`
+  const getState = () => (state);
+
+  // Send actions to the store
+  // Calls reducer fn with argument with state and action (including add'l properties)
+  // `dispatch` sets state to reducer's return value but doesn't return state itself
+  // ==> `dispatch` only sends notification to store to perform action, doesn't read state
+  const dispatch = (action) => { state = reducer(state, action); };
+
+  return {
+    getState, 
+    dispatch,
+  };
+}
+
+// Create store object and dispatch actions
+const store = createStore(reducer);
+
 const incrementAction = {
   type: 'INCREMENT',
-  amount: 7,
+  amount: 3,
 };
-
-console.log(reducer(0, incrementAction));
-console.log(reducer(1, incrementAction));
-console.log(reducer(5, incrementAction));
 
 const decrementAction = {
   type: 'DECREMENT',
-  amount: 7,
+  amount: 4,
 };
 
-console.log(reducer(10, decrementAction));
-console.log(reducer(9, decrementAction));
-console.log(reducer(5, decrementAction));
-
-const unknownAction = { type: 'UNKNOWN' };
-
-console.log(reducer(5, unknownAction));
-console.log(reducer(8, unknownAction));
+// Dispatch actions and read `state`
+store.dispatch(incrementAction);
+console.log(store.getState());
+// => 3
+store.dispatch(incrementAction);
+console.log(store.getState());
+// => 6
+store.dispatch(decrementAction);
+console.log(store.getState());
+// => 2
