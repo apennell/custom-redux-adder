@@ -5,6 +5,7 @@ function reducer(state, action) {
   return state;
 }
 
+
 // Custom function that behaves like Redux's `createStore()`
 // "Factory Pattern"--pattern used in JS for creating complex objects, like our store
 // Provides a closure for variables declared inside the factory function
